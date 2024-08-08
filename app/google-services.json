@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "420551982529",
+    "project_id": "cuddle-c94e5",
+    "storage_bucket": "cuddle-c94e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420551982529:android:c58a432efe7cf9a9060340",
+        "android_client_info": {
+          "package_name": "com.example.cuddle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpSH38cFNu3hU6cI16r-nV_78NYXFwOJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,13 +2,10 @@ package com.example.cuddle.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.cuddle.MainActivity
 import com.example.cuddle.R
 import com.example.cuddle.databinding.ActivityLoginBinding
@@ -17,17 +14,29 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.concurrent.TimeUnit
 
 class loginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     val auth = FirebaseAuth.getInstance()
     private var storedVerificationId: String? = null
+    private lateinit var dialog : AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dialog = AlertDialog.Builder(this).setView(R.layout.loading_layout).create()
+
+        if (auth.currentUser != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
 
         binding.sendOtpButton.setOnClickListener {
             if(binding.userNumber.text!!.isEmpty()){
@@ -53,12 +62,13 @@ class loginActivity : AppCompatActivity() {
             Toast.makeText(this, "Verification ID is null", Toast.LENGTH_SHORT).show()
             return
         }
-
+        dialog.show()
         val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, otp)
         signInWithPhoneAuthCredential(credential)
     }
 
     private fun sendOtp(number: String) {
+        dialog.show()
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
@@ -66,6 +76,7 @@ class loginActivity : AppCompatActivity() {
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
+                dialog.dismiss()
                 Toast.makeText(this@loginActivity, "Verification failed", Toast.LENGTH_SHORT).show()
             }
 
@@ -74,8 +85,9 @@ class loginActivity : AppCompatActivity() {
                 token: PhoneAuthProvider.ForceResendingToken,
             ) {
                 storedVerificationId = verificationId
-                binding.numberLayout.visibility = GONE
-                binding.otpLayout.visibility = VISIBLE
+                dialog.dismiss()
+                binding.numberLayout.visibility = View.GONE
+                binding.otpLayout.visibility = View.VISIBLE
                 Toast.makeText(this@loginActivity, "OTP sent successfully", Toast.LENGTH_SHORT).show()
             }
         }
@@ -92,11 +104,34 @@ class loginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    checkUserExistence(binding.userNumber.text.toString())
                 } else {
+                    dialog.dismiss()
                     Toast.makeText(this, task.exception?.message!!, Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun checkUserExistence(number: String) {
+        FirebaseDatabase.getInstance().getReference("users").child(number)
+            .addValueEventListener(object :ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists()){
+                        dialog.dismiss()
+                        startActivity(Intent(this@loginActivity, MainActivity::class.java))
+                        finish()
+                    }
+                    else{
+                        dialog.dismiss()
+                        startActivity(Intent(this@loginActivity, RegisterActivity::class.java))
+                        finish()
+                    }
+                }
+
+                override fun onCancelled(p0: DatabaseError){
+                    dialog.dismiss()
+                    Toast.makeText(this@loginActivity, p0.message, Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 }

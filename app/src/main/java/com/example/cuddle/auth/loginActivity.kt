@@ -31,7 +31,7 @@ class loginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = AlertDialog.Builder(this).setView(R.layout.loading_layout).create()
+        dialog = AlertDialog.Builder(this).setView(R.layout.loading_layout).setCancelable(false).create()
 
         if (auth.currentUser != null) {
             startActivity(Intent(this, MainActivity::class.java))

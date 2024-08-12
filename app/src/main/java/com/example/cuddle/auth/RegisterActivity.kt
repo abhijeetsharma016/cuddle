@@ -11,10 +11,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.cuddle.MainActivity
 import com.example.cuddle.R
-import com.example.cuddle.databinding.ActivityLoginBinding
 import com.example.cuddle.databinding.ActivityRegisterBinding
 import com.example.cuddle.model.userModel
 import com.example.cuddle.utils.config
+import com.example.cuddle.utils.config.hideDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -31,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.userImage.setOnClickListener {
@@ -58,18 +59,32 @@ class RegisterActivity : AppCompatActivity() {
     private fun uploadImage() {
         config.showDialog(this)
 
-        val storageRef = FirebaseStorage.getInstance().getReference("profile")
-            .child(FirebaseAuth.getInstance().currentUser!!.uid).child("profile.jpg")
+        if (imageUri == null) {
+            hideDialog()
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+            return
+        }
 
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            hideDialog()
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val storageRef = FirebaseStorage.getInstance().getReference("profile")
+            .child(user.uid).child("profile.jpg")
 
         storageRef.putFile(imageUri!!)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener {
                     storeData(it)
                 }.addOnFailureListener {
+                    hideDialog()
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
             }.addOnFailureListener {
+                hideDialog()
                 Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
             }
     }
@@ -88,14 +103,15 @@ class RegisterActivity : AppCompatActivity() {
             status = ""
         )
 
-        FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().currentUser!!.phoneNumber!!)
+        FirebaseDatabase.getInstance().getReference("users")
+            .child(FirebaseAuth.getInstance().currentUser!!.phoneNumber!!)
             .setValue(data).addOnCompleteListener {
+                hideDialog()
                 if (it.isSuccessful) {
                     Toast.makeText(this, "Data inserted", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
-                }
-                else{
+                } else {
                     Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
                 }
             }

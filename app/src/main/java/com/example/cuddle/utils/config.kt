@@ -6,7 +6,7 @@ import com.example.cuddle.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 object config {
-    var dialog : AlertDialog? = null
+    private var dialog : AlertDialog? = null
 
     fun showDialog(context: Context){
         dialog = MaterialAlertDialogBuilder(context)
@@ -17,4 +17,7 @@ object config {
         dialog!!.show()
     }
 
+    fun hideDialog(){
+        dialog!!.dismiss()
+    }
 }

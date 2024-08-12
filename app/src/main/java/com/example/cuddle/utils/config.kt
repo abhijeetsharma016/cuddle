@@ -1,0 +1,20 @@
+package com.example.cuddle.utils
+
+import android.content.Context
+import androidx.appcompat.app.AlertDialog
+import com.example.cuddle.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+
+object config {
+    var dialog : AlertDialog? = null
+
+    fun showDialog(context: Context){
+        dialog = MaterialAlertDialogBuilder(context)
+            .setView(R.layout.loading_layout)
+            .setCancelable(false)
+            .create()
+
+        dialog!!.show()
+    }
+
+}

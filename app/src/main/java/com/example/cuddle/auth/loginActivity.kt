@@ -24,14 +24,15 @@ class loginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     val auth = FirebaseAuth.getInstance()
     private var storedVerificationId: String? = null
-    private lateinit var dialog : AlertDialog
+    private lateinit var dialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog = AlertDialog.Builder(this).setView(R.layout.loading_layout).setCancelable(false).create()
+        dialog =
+            AlertDialog.Builder(this).setView(R.layout.loading_layout).setCancelable(false).create()
 
         if (auth.currentUser != null) {
             startActivity(Intent(this, MainActivity::class.java))
@@ -39,19 +40,17 @@ class loginActivity : AppCompatActivity() {
         }
 
         binding.sendOtpButton.setOnClickListener {
-            if(binding.userNumber.text!!.isEmpty()){
+            if (binding.userNumber.text!!.isEmpty()) {
                 binding.userNumber.error = "Please enter your number"
-            }
-            else{
+            } else {
                 sendOtp(binding.userNumber.text.toString())
             }
         }
 
-        binding.verifyOtpButton.setOnClickListener{
-            if(binding.userOTP.text!!.isEmpty()){
+        binding.verifyOtpButton.setOnClickListener {
+            if (binding.userOTP.text!!.isEmpty()) {
                 binding.userOTP.error = "Please enter your OTP"
-            }
-            else{
+            } else {
                 verifyOtp(binding.userOTP.text.toString())
             }
         }
@@ -88,7 +87,8 @@ class loginActivity : AppCompatActivity() {
                 dialog.dismiss()
                 binding.numberLayout.visibility = View.GONE
                 binding.otpLayout.visibility = View.VISIBLE
-                Toast.makeText(this@loginActivity, "OTP sent successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@loginActivity, "OTP sent successfully", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
         val options = PhoneAuthOptions.newBuilder(auth)
@@ -111,26 +111,26 @@ class loginActivity : AppCompatActivity() {
                 }
             }
     }
-
     private fun checkUserExistence(number: String) {
-        FirebaseDatabase.getInstance().getReference("users").child(number)
-            .addValueEventListener(object :ValueEventListener{
+        // Since the numbers in your database are stored with "+91" prefix, include it here
+        val phoneNumberWithCountryCode = "+91$number"
+
+        // Check the existence in the database
+        FirebaseDatabase.getInstance().getReference("users").child(phoneNumberWithCountryCode)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists()){
-                        dialog.dismiss()
+                    dialog.dismiss()
+                    if (snapshot.exists()) {
                         startActivity(Intent(this@loginActivity, MainActivity::class.java))
-                        finish()
-                    }
-                    else{
-                        dialog.dismiss()
+                    } else {
                         startActivity(Intent(this@loginActivity, RegisterActivity::class.java))
-                        finish()
                     }
+                    finish()
                 }
 
-                override fun onCancelled(p0: DatabaseError){
+                override fun onCancelled(error: DatabaseError) {
                     dialog.dismiss()
-                    Toast.makeText(this@loginActivity, p0.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@loginActivity, error.message, Toast.LENGTH_SHORT).show()
                 }
             })
     }

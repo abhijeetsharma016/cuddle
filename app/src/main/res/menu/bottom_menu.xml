@@ -4,14 +4,14 @@
     <item
         android:id="@+id/datingFragment"
         android:icon="@drawable/hart"
-        android:title="Dating" />
+        android:title="@string/dating" />
     <item
         android:id="@+id/messageFragment"
-        android:icon="@drawable/hart"
-        android:title="Dating" />
+        android:icon="@drawable/message"
+        android:title="@string/message" />
     <item
         android:id="@+id/profileFragment"
-        android:icon="@drawable/hart"
-        android:title="Dating" />
+        android:icon="@drawable/profile"
+        android:title="@string/profile" />
 
 </menu>

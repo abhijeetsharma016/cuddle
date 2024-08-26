@@ -6,4 +6,6 @@
     <string name="dating">Dating</string>
     <string name="message">Message</string>
     <string name="profile">profile</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

@@ -20,8 +20,8 @@ class MessageUserAdapter(val context: Context, val userList: ArrayList<userModel
     }
 
     override fun onBindViewHolder(holder: MessageUserViewHolder, position: Int) {
-        Glide.with(context).load(userList[position].email).into(holder.binding.userImage)
 
+        Glide.with(context).load(userList[position].image).into(holder.binding.userImage)
         holder.binding.userName.text = userList[position].name
         // Bind the data to the view holder
     }

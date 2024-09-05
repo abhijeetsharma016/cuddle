@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.bumptech.glide.Glide
 import com.example.cuddle.databinding.ItemUserLayoutBinding
 import com.example.cuddle.model.userModel
@@ -25,4 +24,5 @@ class DatingAdapter(val context: Context, val list: ArrayList<userModel>) : Recy
 
         Glide.with(context).load(list[position].image).into(holder.binding.userImage)
     }
+
 }

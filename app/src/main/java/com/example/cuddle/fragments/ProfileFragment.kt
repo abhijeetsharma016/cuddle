@@ -1,5 +1,6 @@
 package com.example.cuddle.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.cuddle.R
+import com.example.cuddle.activity.editprofileActivity
+import com.example.cuddle.auth.loginActivity
 import com.example.cuddle.databinding.FragmentDatingBinding
 import com.example.cuddle.databinding.FragmentProfileBinding
 import com.example.cuddle.model.userModel
@@ -39,6 +42,16 @@ class ProfileFragment : Fragment() {
                     config.hideDialog()
                 }
             }
+
+        binding.logout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            startActivity(Intent(requireContext(), loginActivity::class.java))
+            requireActivity().finish()
+        }
+
+        binding.editProfile.setOnClickListener{
+            startActivity(Intent(requireContext(), editprofileActivity::class.java))
+        }
         return binding.root
     }
 

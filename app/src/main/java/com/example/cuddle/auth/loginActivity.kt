@@ -123,10 +123,13 @@ class loginActivity : AppCompatActivity() {
                     if (snapshot.exists()) {
                         startActivity(Intent(this@loginActivity, MainActivity::class.java))
                     } else {
-                        startActivity(Intent(this@loginActivity, RegisterActivity::class.java))
+                        val intent = Intent(this@loginActivity, RegisterActivity::class.java)
+                        intent.putExtra("phoneNumber", phoneNumberWithCountryCode)
+                        startActivity(intent)
                     }
                     finish()
                 }
+
 
                 override fun onCancelled(error: DatabaseError) {
                     dialog.dismiss()

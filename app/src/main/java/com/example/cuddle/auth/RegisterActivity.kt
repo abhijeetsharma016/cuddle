@@ -90,8 +90,18 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun storeData(imageUrl: Uri?) {
+        // Fetch phone number from the Intent
+        val phoneNumber = intent.getStringExtra("phoneNumber")
+
+        if (phoneNumber == null) {
+            hideDialog()
+            Toast.makeText(this, "Phone number not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Create a userModel object
         val data = userModel(
-            number = "",
+            number = phoneNumber,  // Assign the fetched phone number here
             name = binding.userName.text.toString(),
             email = binding.userEmail.text.toString(),
             city = binding.userLocation.text.toString(),
@@ -103,8 +113,9 @@ class RegisterActivity : AppCompatActivity() {
             status = ""
         )
 
+        // Store the data in Firebase under the user's phone number
         FirebaseDatabase.getInstance().getReference("users")
-            .child(FirebaseAuth.getInstance().currentUser!!.phoneNumber!!)
+            .child(phoneNumber)  // Save data under the phone number
             .setValue(data).addOnCompleteListener {
                 hideDialog()
                 if (it.isSuccessful) {

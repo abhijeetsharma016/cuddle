@@ -6,9 +6,14 @@ import com.example.cuddle.model.userModel
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
-class MessageUserAdapter(val context: Context, val userList: ArrayList<userModel>) : RecyclerView.Adapter<MessageUserAdapter.MessageUserViewHolder>() {
+class MessageUserAdapter(val context: Context, val list: ArrayList<String>, val chatKey : List<String>) : RecyclerView.Adapter<MessageUserAdapter.MessageUserViewHolder>() {
 
     inner class MessageUserViewHolder(val binding: UserItemLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -21,13 +26,27 @@ class MessageUserAdapter(val context: Context, val userList: ArrayList<userModel
 
     override fun onBindViewHolder(holder: MessageUserViewHolder, position: Int) {
 
-        Glide.with(context).load(userList[position].image).into(holder.binding.userImage)
-        holder.binding.userName.text = userList[position].name
+        FirebaseDatabase.getInstance().getReference("users").child(list[position]).addListenerForSingleValueEvent(
+            object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    if(snapshot.exists()){
+                        val data = snapshot.getValue(userModel::class.java)
+                        Glide.with(context).load(data!!.image).into(holder.binding.userImage)
+                        holder.binding.userName.text = data.name
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
         // Bind the data to the view holder
     }
 
     override fun getItemCount(): Int {
         // Return the size of the user list
-        return userList.size
+        return list.size
     }
 }

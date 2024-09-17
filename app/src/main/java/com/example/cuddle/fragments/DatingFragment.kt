@@ -12,6 +12,7 @@ import com.example.cuddle.R
 import com.example.cuddle.adapter.DatingAdapter
 import com.example.cuddle.databinding.FragmentDatingBinding
 import com.example.cuddle.model.userModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -24,6 +25,8 @@ class DatingFragment : Fragment() {
 
     private lateinit var binding: FragmentDatingBinding
     private lateinit var manager: CardStackLayoutManager
+    private var currentId: String? = null  // To store the current user's ID
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +34,9 @@ class DatingFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentDatingBinding.inflate(inflater, container, false)
+
+        currentId = FirebaseAuth.getInstance().currentUser?.phoneNumber
+
         getData()
 
         return binding.root
@@ -91,7 +97,9 @@ class DatingFragment : Fragment() {
                     for (data in snapshot.children) {
                         val model = data.getValue(userModel::class.java)
                         model?.let {
-                            list!!.add(it)
+                            if (model.number != currentId) {  // Assuming userModel has a 'uid' field
+                                list!!.add(it)
+                            }
                         }
                     }
 

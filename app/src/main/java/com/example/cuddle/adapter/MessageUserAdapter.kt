@@ -4,10 +4,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cuddle.databinding.UserItemLayoutBinding
 import com.example.cuddle.model.userModel
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.cuddle.activity.MessageActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -20,7 +22,6 @@ class MessageUserAdapter(val context: Context, val list: ArrayList<String>, val 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageUserViewHolder {
-        // Inflate the layout and return the view holder
         return MessageUserViewHolder(UserItemLayoutBinding.inflate(LayoutInflater.from(context),parent,false))
     }
 
@@ -42,6 +43,12 @@ class MessageUserAdapter(val context: Context, val list: ArrayList<String>, val 
                 }
             }
         )
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, MessageActivity::class.java)
+            intent.putExtra("userId", list[position])
+            intent.putExtra("chatId", chatKey[position])
+            context.startActivity(intent)
+        }
         // Bind the data to the view holder
     }
 

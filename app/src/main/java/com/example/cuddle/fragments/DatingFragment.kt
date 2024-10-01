@@ -83,41 +83,92 @@ class DatingFragment : Fragment() {
         binding.cardStackView.layoutManager = manager
     }
 
-    companion object{
-         var list: ArrayList<userModel>? = null
+    companion object {
+        var list: ArrayList<userModel>? = null
 
     }
+
     private fun getData() {
-        FirebaseDatabase.getInstance().getReference("users").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                Log.d("DatingFragment", "onDataChange: ${snapshot.toString()}")
-                if (snapshot.exists()) {
-                    list = arrayListOf()
+        val context = requireContext()
+        val userList = arrayListOf<userModel>()
+        val chatSet = mutableSetOf<String>()
+        val currentId = FirebaseAuth.getInstance().currentUser?.phoneNumber
+
+        if (currentId == null) {
+            Toast.makeText(context, "User not authenticated", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        FirebaseDatabase.getInstance().getReference("chats")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!isAdded) return
+
+                    chatSet.clear()
+
                     for (data in snapshot.children) {
-                        val model = data.getValue(userModel::class.java)
-                        model?.let {
-                            if (model.number != currentId) {  // Assuming userModel has a 'uid' field
-                                list!!.add(it)
+                        val chatKey = data.key ?: continue
+                        val senderId = chatKey.substring(0, currentId.length)
+                        val receiverId = chatKey.substring(currentId.length)
+
+                        // Check if the current user is either the sender or the receiver
+                        if (senderId == currentId || receiverId == currentId) {
+                            val otherUserId = if (senderId == currentId) receiverId else senderId
+                            val bidirectionalKey1 = currentId + otherUserId
+                            val bidirectionalKey2 = otherUserId + currentId
+
+                            if (!chatSet.contains(bidirectionalKey1) && !chatSet.contains(
+                                    bidirectionalKey2
+                                )
+                            ) {
+                                chatSet.add(chatKey)
                             }
                         }
                     }
 
-                    list!!.shuffle()
-                    init()
+                    // Fetch users from "users" node
+                    FirebaseDatabase.getInstance().getReference("users")
+                        .addValueEventListener(object :
+                            ValueEventListener {
+                            override fun onDataChange(userSnapshot: DataSnapshot) {
+                                if (!isAdded) return
 
-                    binding.cardStackView.layoutManager = manager
-                    binding.cardStackView.itemAnimator = DefaultItemAnimator()
+                                userList.clear()
 
-                    binding.cardStackView.adapter = DatingAdapter(requireContext(), list!!)
-                } else {
-                    Toast.makeText(requireContext(), "No Data Found", Toast.LENGTH_SHORT).show()
+                                if (userSnapshot.exists()) {
+                                    for (data in userSnapshot.children) {
+                                        val model = data.getValue(userModel::class.java)
+                                        model?.let {
+                                            if (model.number != currentId) {  // Exclude current user
+                                                userList.add(it)
+                                            }
+                                        }
+                                    }
+                                    userList.shuffle()
+
+                                    // Pass chatSet to the adapter
+                                    binding.cardStackView.adapter =
+                                        DatingAdapter(context, userList, chatSet.toList())
+                                    init()  // Initialize the layout manager and item animator
+                                } else {
+                                    Toast.makeText(context, "No Data Found", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                Toast.makeText(
+                                    context,
+                                    "Error: ${error.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        })
                 }
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireContext(), "error: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 }

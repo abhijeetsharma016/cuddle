@@ -9,8 +9,9 @@ import com.bumptech.glide.Glide
 import com.example.cuddle.activity.MessageActivity
 import com.example.cuddle.databinding.ItemUserLayoutBinding
 import com.example.cuddle.model.userModel
+import com.google.firebase.auth.FirebaseAuth
 
-class DatingAdapter(val context: Context, val list: ArrayList<userModel>) : RecyclerView.Adapter<DatingAdapter.DatingViewHolder>() {
+class DatingAdapter(val context: Context, val list: ArrayList<userModel>, val chatKey : List<String>) : RecyclerView.Adapter<DatingAdapter.DatingViewHolder>() {
     inner class DatingViewHolder(val binding: ItemUserLayoutBinding)
         : RecyclerView.ViewHolder(binding.root)
 
@@ -26,9 +27,19 @@ class DatingAdapter(val context: Context, val list: ArrayList<userModel>) : Recy
 
         Glide.with(context).load(list[position].image).into(holder.binding.userImage)
 
+        // Find the correct chatKey for this user
+        val otherUserId = list[position].number
+        val currentId = FirebaseAuth.getInstance().currentUser?.phoneNumber
+
+        // Find the corresponding chatKey
+        val chatId = chatKey.find {
+            it.contains(currentId!!) && it.contains(otherUserId!!)
+        }
+
         holder.binding.chat.setOnClickListener {
             val intent = Intent(context, MessageActivity::class.java)
-            intent.putExtra("userId", list[position].number)
+            intent.putExtra("userId", otherUserId)
+            intent.putExtra("chatId", chatId) // Pass chatId to MessageActivity
             context.startActivity(intent)
         }
     }

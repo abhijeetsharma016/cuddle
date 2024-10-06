@@ -81,6 +81,9 @@ class MessageActivity : AppCompatActivity() {
         reference.child(reference.push().key!!).setValue(map).addOnCompleteListener {
             if (it.isSuccessful) {
                 binding.yourMessage.text = null
+
+
+
                 Toast.makeText(this, "Message Sent", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()

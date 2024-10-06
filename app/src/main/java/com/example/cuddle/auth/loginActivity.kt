@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import java.util.concurrent.TimeUnit
 
 class loginActivity : AppCompatActivity() {
@@ -31,8 +32,10 @@ class loginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dialog =
-            AlertDialog.Builder(this).setView(R.layout.loading_layout).setCancelable(false).create()
+        dialog = AlertDialog.Builder(this)
+            .setView(R.layout.loading_layout)
+            .setCancelable(false)
+            .create()
 
         if (auth.currentUser != null) {
             startActivity(Intent(this, MainActivity::class.java))
@@ -111,8 +114,8 @@ class loginActivity : AppCompatActivity() {
                 }
             }
     }
+
     private fun checkUserExistence(number: String) {
-        // Since the numbers in your database are stored with "+91" prefix, include it here
         val phoneNumberWithCountryCode = "+91$number"
 
         // Check the existence in the database
@@ -121,20 +124,45 @@ class loginActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     dialog.dismiss()
                     if (snapshot.exists()) {
-                        startActivity(Intent(this@loginActivity, MainActivity::class.java))
+                        // User exists, update the FCM token
+                        updateFcmToken(phoneNumberWithCountryCode)
                     } else {
+                        // User does not exist, navigate to registration
                         val intent = Intent(this@loginActivity, RegisterActivity::class.java)
                         intent.putExtra("phoneNumber", phoneNumberWithCountryCode)
                         startActivity(intent)
+                        finish()
                     }
-                    finish()
                 }
-
 
                 override fun onCancelled(error: DatabaseError) {
                     dialog.dismiss()
                     Toast.makeText(this@loginActivity, error.message, Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    private fun updateFcmToken(phoneNumber: String) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Toast.makeText(this, "Failed to retrieve FCM token", Toast.LENGTH_SHORT).show()
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            val userRef = FirebaseDatabase.getInstance().getReference("users").child(phoneNumber)
+
+            // Update FCM token
+            userRef.child("fcmToken").setValue(token).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "FCM token updated", Toast.LENGTH_SHORT).show()
+                    // Navigate to MainActivity
+                    startActivity(Intent(this@loginActivity, MainActivity::class.java))
+                    finish()
+                } else {
+                    Toast.makeText(this, "Failed to update FCM token", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

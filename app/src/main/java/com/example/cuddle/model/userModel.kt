@@ -7,6 +7,7 @@ data class userModel(
     val city : String? = "",
     val gender : String? = "",
     val relationShipStatus : String? = "",
+    val fcmToken : String? = "",
     val star : String? = "",
     val image : String? = "",
     val age : String? = "",

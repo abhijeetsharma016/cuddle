@@ -15,8 +15,10 @@ import com.example.cuddle.databinding.ActivityRegisterBinding
 import com.example.cuddle.model.userModel
 import com.example.cuddle.utils.config
 import com.example.cuddle.utils.config.hideDialog
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 
 class RegisterActivity : AppCompatActivity() {
@@ -90,41 +92,54 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun storeData(imageUrl: Uri?) {
-        // Fetch phone number from the Intent
-        val phoneNumber = intent.getStringExtra("phoneNumber")
-
-        if (phoneNumber == null) {
-            hideDialog()
-            Toast.makeText(this, "Phone number not found", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Create a userModel object
-        val data = userModel(
-            number = phoneNumber,  // Assign the fetched phone number here
-            name = binding.userName.text.toString(),
-            email = binding.userEmail.text.toString(),
-            city = binding.userLocation.text.toString(),
-            gender = "",
-            relationShipStatus = "",
-            star = "",
-            image = imageUrl.toString(),
-            age = "",
-            status = ""
-        )
-
-        // Store the data in Firebase under the user's phone number
-        FirebaseDatabase.getInstance().getReference("users")
-            .child(phoneNumber)  // Save data under the phone number
-            .setValue(data).addOnCompleteListener {
+        // Fetch FCM token first
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
                 hideDialog()
-                if (it.isSuccessful) {
-                    Toast.makeText(this, "Data inserted", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                } else {
-                    Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(this, "Failed to fetch FCM token", Toast.LENGTH_SHORT).show()
+                return@addOnCompleteListener
             }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Fetch phone number from the Intent
+            val phoneNumber = intent.getStringExtra("phoneNumber")
+
+            if (phoneNumber == null) {
+                hideDialog()
+                Toast.makeText(this, "Phone number not found", Toast.LENGTH_SHORT).show()
+                return@addOnCompleteListener
+            }
+
+            // Create a userModel object
+            val data = userModel(
+                number = phoneNumber,  // Assign the fetched phone number here
+                name = binding.userName.text.toString(),
+                email = binding.userEmail.text.toString(),
+                city = binding.userLocation.text.toString(),
+                gender = "",
+                relationShipStatus = "",
+                fcmToken = token,
+                star = "",
+                image = imageUrl.toString(),
+                age = "",
+                status = ""
+            )
+
+            // Store the data in Firebase under the user's phone number
+            FirebaseDatabase.getInstance().getReference("users")
+                .child(phoneNumber)  // Save data under the phone number
+                .setValue(data).addOnCompleteListener {
+                    hideDialog()
+                    if (it.isSuccessful) {
+                        Toast.makeText(this, "Data inserted", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this, it.exception?.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
     }
 }

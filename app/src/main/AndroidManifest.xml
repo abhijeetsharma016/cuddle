@@ -12,30 +12,45 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cuddle"
         tools:targetApi="31">
+
         <activity
             android:name=".activity.MessageActivity"
             android:exported="false" />
+
         <activity
             android:name=".activity.editprofileActivity"
             android:exported="false" />
+
         <activity
             android:name=".activity.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".auth.RegisterActivity"
             android:exported="true" />
+
         <activity
             android:name=".auth.loginActivity"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
     </application>
+
+    <service
+        android:name=".utils.MyFirebaseMessagingService"
+        android:exported="false"
+        android:permission="com.google.android.c2dm.permission.SEND">
+        <intent-filter>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        </intent-filter>
+    </service>
 
 </manifest>

@@ -29,12 +29,15 @@ UI/UX: Card Stack View implementation for swipe gestures
 📸 ## Screenshots
 Here's a visual tour of Cuddle in action:
 
-Login / Signup	Card Stack View	Chat Interface
-<img src="https://github.com/user-attachments/assets/9df55593-3b23-43e0-88dd-058ada4460a8" width="250">	<img src="https://github.com/user-attachments/assets/b6337ffc-1f97-4e85-9484-99cfc08b5e6d" width="250">	<img src="https://github.com/user-attachments/assets/fc8e95bc-8700-41e3-9687-518b0fc19844" width="250">
-Profile Screen	Profile Edit	Matches
-<img src="https://github.com/user-attachments/assets/821afb33-0c80-4bca-b8ef-9ade2fe009f4" width="250">	<img src="https://github.com/user-attachments/assets/879e9ebc-c8f9-49fe-9da8-b9291128ddd0" width="250">	<img src="https://github.com/user-attachments/assets/8b6c4464-5806-4e1b-ad25-0e3e11a15bef" width="250">
+📸 **Screenshots**
+Here's a visual tour of Cuddle in action:
 
-Export to Sheets
+| Login / Signup | Card Stack View | Chat Interface |
+| :-------------------: | :--------------------: | :-------------------: |
+| \<img src="http://googleusercontent.com/file_content/1" width="250"\> | \<img src="http://googleusercontent.com/file_content/1" width="250"\> | \<img src="http://googleusercontent.com/file_content/1" width="250"\> |
+| **Profile Screen** | **Profile Edit** | **Matches** |
+| \<img src="http://googleusercontent.com/file_content/1" width="250"\> | \<img src="http://googleusercontent.com/file_content/1" width="250"\> | \<img src="http://googleusercontent.com/file_content/1" width="250"\> |
+
 🚀 ## Getting Started
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 

@@ -1,4 +1,3 @@
-This is a dating app, which is under progress
 HeartMatch: Your Next Connection Awaits! ❤️
 🌟 Overview
 HeartMatch is a modern dating application designed to help users find meaningful connections through an intuitive and engaging interface. It combines a smooth swipe-to-accept/reject card stack view with robust chat assistance and efficient image handling, making the dating experience seamless and fun.
@@ -25,27 +24,20 @@ Image Loading: Glide (for efficient image retrieval, caching, and display)
 
 UI/UX: Card Stack View implementation for swipe gestures
 
+(Add any other specific languages, frameworks, or libraries here, e.g., Android/iOS SDK, Kotlin/Swift, React Native, etc.)
+
 📸 Screenshots
 To get a visual sense of HeartMatch in action, check out these screenshots:
-![Screenshot_2025-08-26-14-03-59-900_com example cuddle](https://github.com/user-attachments/assets/b6337ffc-1f97-4e85-9484-99cfc08b5e6d)
-![Screenshot_2025-08-26-14-04-16-586_com example cuddle](https://github.com/user-attachments/assets/fc8e95bc-8700-41e3-9687-518b0fc19844)
-![Screenshot_2025-08-26-14-23-09-426_com example cuddle](https://github.com/user-attachments/assets/821afb33-0c80-4bca-b8ef-9ade2fe009f4)
-![Screenshot_2025-08-26-14-23-16-827_com example cuddle](https://github.com/user-attachments/assets/879e9ebc-c8f9-49fe-9da8-b9291128ddd0)
-![Screenshot_2025-08-26-14-23-43-404_com example cuddle](https://github.com/user-attachments/assets/8b6c4464-5806-4e1b-ad25-0e3e11a15bef)
-![Screenshot_2025-08-26-14-03-31-127_com example cuddle](https://github.com/user-attachments/assets/9df55593-3b23-43e0-88dd-058ada4460a8)
 
+Login/Signup Screen:
 
+Profile Card View:
 
+Chat Interface:
 
-Login/Signup Screen: (Link to image of login screen or provide a placeholder)
+User Profile Detail:
 
-Profile Card View: (Link to image of card stack with profiles)
-
-Chat Interface: (Link to image of chat screen with assistance)
-
-User Profile Detail: (Link to image of a detailed user profile)
-
-(Replace the placeholder links above with actual image URLs or descriptions of where to find them, e.g., in the assets/screenshots folder.)
+(Note: In a standard Markdown README, images are displayed sequentially. For a true "grid" layout or specific sizing, you would typically need to render this README on a web page using HTML and CSS.)
 
 🚀 Getting Started
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
@@ -65,7 +57,7 @@ cd HeartMatch
 
 Configure Firebase:
 
-Place your google-services.json (Android) or GoogleService-Info.plist (iOS) file into the appropriate project directory.
+Place your Google-services.json (Android) or GoogleService-Info.plist (iOS) file into the appropriate project directory.
 
 Ensure your Firebase project has been set up with the necessary services (Authentication, with Phone Sign-in method enabled, and Firestore).
 
@@ -99,6 +91,6 @@ Contributions are always welcome! If you have suggestions for improvements, new 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 📧 Contact
-Your Name - your.email@example.com
+Your Name - Abhijeet Sharma
 
-Project Link: https://github.com/your-username/HeartMatch
+Project Link: https://github.com/abhijeetsharma016/cuddle
